@@ -24,29 +24,28 @@ public class Player : MonoBehaviour
         Jump();
         Move();
         Dive();
+        SideCheck();
     }
 
     void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount == 1)
         {
-            rigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rigid.AddForce(new Vector2(0f, jumpForce),ForceMode.Impulse);
             jumpCount--;
         }
     }
 
     void Move()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-
-        if (horizontalInput < 0)
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
+            transform.position += new Vector3(-1 * moveSpeed * Time.deltaTime, 0, 0);
         }
 
-        else if (horizontalInput > 0)
+        if (Input.GetKey(KeyCode.RightArrow))
         {
-            transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
+            transform.position += new Vector3(1 * moveSpeed * Time.deltaTime, 0, 0);
         }
     }
 
@@ -57,8 +56,8 @@ public class Player : MonoBehaviour
         {
             if (jumpCount == 0)
             {
-                Vector3 diveDirection = -transform.right * diveForce; // 왼쪽으로 다이빙하는 방향
-                rigid.AddForce(diveDirection, ForceMode.Impulse);
+                transform.Translate(Vector3.left * diveForce * Time.deltaTime);              //GetKey로 diveForce에 값을 저장받고 저장받은 -diveForce만큼 이동하기
+                //rotation 90
             }
         }
 
@@ -66,10 +65,31 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             if (jumpCount == 0)
-            {
-                Vector3 diveDirection = transform.right * diveForce; // 오른쪽으로 다이빙하는 방향
-                rigid.AddForce(diveDirection, ForceMode.Impulse);
+            {       
+                //GetKey로 diveForce에 값을 저장받고 저장받은 diveForce만큼 이동하기
+                //rotation -90
             }
+        }
+    }
+
+    void SideCheck()
+    {
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.rotation = Quaternion.Euler(0f, -80f, 0f);
+        }
+        if (Input.GetKeyUp(KeyCode.A))
+        {
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.rotation = Quaternion.Euler(0f, 80f, 0f);
+        }   
+        if (Input.GetKeyUp(KeyCode.D))
+        {
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
     }
             

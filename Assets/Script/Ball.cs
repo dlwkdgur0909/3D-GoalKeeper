@@ -27,9 +27,14 @@ public class Ball : MonoBehaviour
 
 
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("GoalPos"))
+        {
+            Destroy(gameObject);
+        }
+
+        if (other.gameObject.CompareTag("Player"))
         {
             Destroy(gameObject);
         }
