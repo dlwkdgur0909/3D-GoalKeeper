@@ -6,12 +6,7 @@ public class Ball : MonoBehaviour
 {
     [SerializeField] private Vector3 target;
 
-    float Speed = 0.5f;
-
-    void Start()
-    {
-
-    }
+    private float Speed = 0.5f;
 
     void Update()
     {
@@ -20,12 +15,10 @@ public class Ball : MonoBehaviour
 
     void Move()
     {
-        transform.Translate(target * Speed);
+        transform.Translate(target * Speed * Time.deltaTime);
     }
 
     public void SetTarget(Vector3 targetPos) => this.target = targetPos;
-
-
 
     void OnCollisionEnter(Collision other)
     {

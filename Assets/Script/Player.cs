@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
     Rigidbody rigid;
     [Header("***Jump***")]
     public float jumpForce = 10f;
     public int jumpCount = 0;
     public float diveForce = 5f;
+    private bool isJump = false;
+    private bool isDiving = false;
+    private bool isDiveDirectionSet = false;
+    private Vector3 diveDirection; // 다이빙 방향 저장
     [Header("***Move***")]
     public float moveSpeed = 10f;
 
@@ -24,19 +27,34 @@ public class Player : MonoBehaviour
         Jump();
         Move();
         Dive();
-        SideCheck();
     }
 
-    void Jump()
+    private void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && jumpCount == 1)
+        if (Input.GetKeyDown(KeyCode.UpArrow) && jumpCount == 1 && !isJump && !isDiving)
         {
-            rigid.AddForce(new Vector2(0f, jumpForce),ForceMode.Impulse);
+            rigid.AddForce(new Vector2(0f, jumpForce), ForceMode.Impulse);
             jumpCount--;
+            isJump = true;
+        }
+
+        if (isJump && (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)) && !isDiving)
+        {
+            isDiveDirectionSet = true;
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+                diveDirection = Vector3.left;
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+                diveDirection = Vector3.right;
+        }
+
+        if (isJump && isDiveDirectionSet && Input.GetKeyDown(KeyCode.Space) && !isDiving)
+        {
+            rigid.AddForce(diveDirection * diveForce, ForceMode.Impulse);
+            isDiving = true;
         }
     }
 
-    void Move()
+    private void Move()
     {
         if (Input.GetKey(KeyCode.LeftArrow))
         {
@@ -49,56 +67,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Dive()
+    private void Dive()
     {
-        // 왼쪽으로 다이빙하기
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if (jumpCount == 0)
-            {
-                transform.Translate(Vector3.left * diveForce * Time.deltaTime);              //GetKey로 diveForce에 값을 저장받고 저장받은 -diveForce만큼 이동하기
-                //rotation 90
-            }
-        }
-
-        // 오른쪽으로 다이빙하기
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if (jumpCount == 0)
-            {       
-                //GetKey로 diveForce에 값을 저장받고 저장받은 diveForce만큼 이동하기
-                //rotation -90
-            }
-        }
+        // 추가로 다이빙 관련 로직이 필요하면 여기에 작성
     }
-
-    void SideCheck()
-    {
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.rotation = Quaternion.Euler(0f, -80f, 0f);
-        }
-        if (Input.GetKeyUp(KeyCode.A))
-        {
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.rotation = Quaternion.Euler(0f, 80f, 0f);
-        }   
-        if (Input.GetKeyUp(KeyCode.D))
-        {
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-        }
-    }
-            
 
     void OnCollisionEnter(Collision coll)
     {
         if (coll.gameObject.tag == "Ground")
         {
+            rigid.AddForce(Vector3.zero * diveForce * Time.deltaTime, ForceMode.Impulse);
             jumpCount++;
+            isJump = false;
+            isDiving = false;
+            isDiveDirectionSet = false;
         }
     }
 }

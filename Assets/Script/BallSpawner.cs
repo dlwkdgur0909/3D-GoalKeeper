@@ -6,12 +6,11 @@ public class BallSpawner : MonoBehaviour
     public GameObject ballPrefab; // 생성할 공의 프리팹
     public Transform goalPost; // 골대의 위치
 
-    public float ballSpeed = 5f; // 공의 이동 속도
-    public float spawnInterval = 3f; // 공 생성 간격
-    public float minX = -5f; // 랜덤 위치의 최소 x값
-    public float maxX = 5f; // 랜덤 위치의 최대 x값
-    public float minZ = -5f; // 랜덤 위치의 최소 z값
-    public float maxZ = 5f; // 랜덤 위치의 최대 z값
+    public float spawnInterval = 3f; 
+    public float minX = -5f; 
+    public float maxX = 5f; 
+    public float minZ = -5f;
+    public float maxZ = 5f;
 
     private void Start()
     {
